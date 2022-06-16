@@ -21,7 +21,7 @@ Request::innertubeRequest(
     ]
 );
 
-$response = Request::getResponses()["feed"];
+$response = Request::getInnertubeResponses()["feed"];
 
 $ytdata = json_decode($response);
 $items = $ytdata -> contents -> twoColumnBrowseResultsRenderer -> tabs[0] -> tabRenderer -> content -> richGridRenderer -> contents;

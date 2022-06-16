@@ -15,7 +15,7 @@ if(!isset($yt->spf) or $yt->spf == false) {
 Request::innertubeRequest("feed", "browse", (object)[
     "browseId" => "FEtrending"
 ]);
-$response = Request::getResponses()["feed"];
+$response = Request::getInnertubeResponses()["feed"];
 
 $timeb = round(microtime(true) * 1000);
 //echo $timeb - $timea; die();

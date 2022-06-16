@@ -95,7 +95,7 @@ class Request
         }
     }
 
-    public static function getResponses()
+    public static function getInnertubeResponses()
     {
         $responses = self::$RequestManager->runQueue();
         $final = [];

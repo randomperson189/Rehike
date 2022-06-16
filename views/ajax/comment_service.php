@@ -32,7 +32,7 @@ if (isset($action))
     Request::innertubeRequest("page", "next", (object)[
         "continuation" => $_POST['page_token']
     ]);
-    $response = Request::getResponses()["page"];
+    $response = Request::getInnertubeResponses()["page"];
 
     $ytdata = json_decode($response);
 }

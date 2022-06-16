@@ -29,7 +29,7 @@ Request::innertubeRequest(
     "ANDROID",
     "15.14.33"
 );
-$response = Request::getResponses()["feed"];
+$response = Request::getInnertubeResponses()["feed"];
 $yt -> response = $response;
 
 $timeb = round(microtime(true) * 1000);

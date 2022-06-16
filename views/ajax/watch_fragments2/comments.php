@@ -17,7 +17,7 @@ $yt->spfName = 'other';
 Request::innertubeRequest("page", "next", (object)[
     "continuation" => $_GET['ctoken']
 ]);
-$response = Request::getResponses()["page"];
+$response = Request::getInnertubeResponses()["page"];
 
 $ytdata = json_decode($response);
 

@@ -60,7 +60,7 @@ curl_close($ch);
 $dislikesData = json_decode($rydResponse);
 
 
-$responses = Request::getResponses();
+$responses = Request::getInnertubeResponses();
 
 $response = $responses["watch"];
 $presponse = $responses["player"];
