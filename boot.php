@@ -16,13 +16,14 @@ $yt->playerBasepos = $_playerCore->basepos;
 
 if (isset($_COOKIE["PREF"])) {
    $PREF = explode("&", $_COOKIE["PREF"]);
-   $yt->PREF = [];
+   $yt->PREF = (object) [];
    for ($i = 0; $i < count($PREF); $i++) {
       $option = explode("=", $PREF[$i]);
-      $yt->PREF[$option[0]] = $option[1];
+      $title = $option[0];
+      $yt->PREF->$title = $option[1];
    }
 } else {
-   $yt->PREF = [
+   $yt->PREF = (object) [
       "f5" => "20030"
    ];
 }
@@ -41,6 +42,8 @@ $twig -> addFilter (
 
 function YcRehikeAutoloader($class)
 {
+	$class = str_replace("\\", "/", $class);
+	
     if (file_exists("mod/{$class}.php")) {
         require "mod/{$class}.php";
     }
