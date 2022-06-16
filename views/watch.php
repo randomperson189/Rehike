@@ -227,6 +227,7 @@ if (!is_null($secondaryInfo)) {
         ->metadataRowContainerRenderer->rows ?? null;
     $rws_->showMoreText = $secondaryInfo->showMoreText ?? null;
     $rws_->showLessText = $secondaryInfo->showLessText ?? null;
+	$rws_->metaItems = $secondaryInfo->metadataRowContainer->metadataRowContainerRenderer->rows ?? null;
 }
 /**
  * Recommended RW
