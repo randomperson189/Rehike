@@ -9,7 +9,7 @@ set_include_path($root);
 if (isset($_COOKIE['VISITOR_INFO1_LIVE'])) {
     $visitor = $_COOKIE['VISITOR_INFO1_LIVE'];
 } else {
-    $visitor = '';
+    $visitor = 'QRe0LmmEJyY'; // DEBUG
     setcookie("VISITOR_INFO1_LIVE", $visitor);
 }
 
@@ -19,15 +19,14 @@ $yt = (object) [];
 $template = '';
 
 include ('boot.php');
-
-// Load configuration
-$rehikeConfig = Rehike\RehikeConfigManager::loadConfig();
-$yt->config = $rehikeConfig;
-
+include ('defaultExperiments.php');
 include ('resourceConstants.php');
 
 // Post boot events
 Rehike\ContextManager::$visitorData = $visitor;
+
+// * Set signin state
+Rehike\Signin\AuthManager::use($yt);
 
 // differentiates pages
 require ('router.php');

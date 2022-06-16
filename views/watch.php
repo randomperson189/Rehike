@@ -34,20 +34,6 @@ if (!is_null($yt->playlistId)) {
     $watchRequestParams['playlistIndex'] = $yt->playlistIndex;
 }
 
-if(isset($_GET["t"])) {
-    preg_match_all("/\d{1,6}/", $_GET["t"], $times);
-    $times = $times[0];
-    if (count($times) == 1) { // before you whine "waaahh use case" I CAN'T IT BREAKS IT FOR NO FUCKING REASON, if you wanna make this better, go ahead
-        $startTime = (int) $times[0];
-    } else if (count($times) == 2) {
-        $startTime = ((int) $times[0] * 60) + (int) $times[0];
-    } else if (count($times) == 3) {
-        $startTime = ((int) $times[0] * 3600) + ((int) $times[1] * 60) + (int) $times[2];
-    } else {
-        $startTime = 0;
-    }
-}
-
 Request::innertubeRequest("watch", "next", (object) $watchRequestParams);
 Request::innertubeRequest("player", "player", (object) ([
     "playbackContext" => [
@@ -60,9 +46,8 @@ Request::innertubeRequest("player", "player", (object) ([
             'playerHeightPixels' => 1080,
             'playerWidthPixels' => 1920,
             'signatureTimestamp' => $yt->playerCore->sts
-        ]   
-    ],
-    "startTimeSecs" => $startTime ?? 0
+        ]
+    ]
 ] + $watchRequestParams));
 
 $ch = curl_init("https://returnyoutubedislikeapi.com/votes?videoId=" . $yt->videoId);
@@ -75,7 +60,7 @@ curl_close($ch);
 $dislikesData = json_decode($rydResponse);
 
 
-$responses = Request::getInnertubeResponses();
+$responses = Request::getResponses();
 
 $response = $responses["watch"];
 $presponse = $responses["player"];
@@ -119,7 +104,15 @@ $secondaryResults = $contents->twoColumnWatchNextResults->secondaryResults->seco
 $playlist = $contents->twoColumnWatchNextResults->playlist ?? null;
 $primaryInfo = findKey($results->contents, "videoPrimaryInfoRenderer") ?? null;
 $secondaryInfo = findKey($results->contents, "videoSecondaryInfoRenderer") ?? null;
-$commentSection = findKey($results->contents, 'itemSectionRenderer') ?? null;
+
+ /**
+ * PATCH (yukiscoffee): Move comment section model to custom function
+ * for unique detection mechanism.
+ * 
+ * Previous mechanism failed to select the right property if more
+ * than one itemSectionRenderer was present in the contents model.
+ */
+$commentSection = WatchUtils::findCommentsSection($results->contents) ?? null;
 
 /*
 $rw = (object) [
@@ -173,17 +166,6 @@ if (!is_null($primaryInfo)) {
 
     $rwp_ = $rw->results->videoPrimaryInfoRenderer;
     $rwp_->title = $primaryInfo->title ?? null;
-    $rwp_->hashtags = [];
-    for ($i = 0; $i < count($rwp_->title->runs); $i++) {
-        if (isset($rwp_->title->runs[$i]->navigationEndpoint->browseEndpoint->browseId) and $rwp_->title->runs[$i]->navigationEndpoint->browseEndpoint->browseId == "FEhashtag") {
-            $rwp_->hashtags[] = preg_replace("/#/", "", $rwp_->title->runs[$i]->text);
-        } 
-    }
-    $rwp_->superTitle = isset($primaryInfo->superTitleLink) ? (object) [] : null;
-    if (isset($rwp_->superTitle)) {
-        $rwp_->superTitle->text = preg_replace("/For/", "for", preg_replace("/On/", "on", ucwords(strtolower($_getText($primaryInfo->superTitleLink)))));
-        $rwp_->superTitle->url = $_getUrl($primaryInfo->superTitleLink->runs[0]);
-    }
     $rwp_->viewCount = $primaryInfo->viewCount->videoViewCountRenderer->viewCount ?? null;
     $rwp_->badges = $primaryInfo->badges ?? null;
     $rwp_->actions = (object) [];

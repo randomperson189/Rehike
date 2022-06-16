@@ -8,7 +8,11 @@ if (isset($_GET["enable_polymer"]) && $_GET["enable_polymer"] == "1") {
 
 switch ($routerUrl->path[0]) {
     case '':
-        include('views/feed/what_to_watch.php');
+        if ($yt->experiment->webV2Home) {
+            include('views/feed/what_to_watch_v2.php');
+        } else {
+            include('views/feed/what_to_watch.php');
+        }
         break;
     case 'watch':
         include('views/watch.php');
@@ -45,6 +49,7 @@ switch ($routerUrl->path[0]) {
     case 'youtubei':
     case 's':
     case 'embed':
+    case '404':
     case 'yts':
         include('simplefunnel.php');
         die();
